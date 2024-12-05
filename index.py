@@ -1,18 +1,27 @@
+# CS3310 Fall 2024 Assignment 4
+# Author: Joshua Whynot
+# Date: 12/3/24
+# Updated: 12/5/24
+
+#Data structure imports
 from gamesList import gamesLinkedList
-from game import Game
+from game import Game 
 from node import node
+#search algorithm imports
 from linearSearch import linearSearch
+from binarySearch import binarySearch
+#library imports
 import random
 import time
-from insertionSort import insertionSort
 import csv #need this for csv file reading because there is , inside the data
-from quickSort import quickSort
 import sys
-
-#set recursion limit, we got a lot of inputs
+#sorting algorithm imports
+from insertionSort import insertionSort
+from quickSort import quickSort
+#set recursion limit, we have a lot of inputs
 sys.setrecursionlimit(1000000)
 
-
+#main function
 def main():
     #open file
     file = open("games.csv", "r")
@@ -21,11 +30,9 @@ def main():
     #read file
     #skip first line
     file.readline()
-    duplicatecounter = 0
     with open('games.csv', newline='') as file:
         reader = csv.reader(file)
         next(reader)  # Skip the first line
-        duplicatecounter = 0
         for row in reader:
             # Check if name already exists in linked list
             x = linearSearch(gamesList, row[1])
@@ -38,12 +45,13 @@ def main():
                     continue
             # Create game
             game = Game(row[0], row[1], row[2], row[3], row[4], row[5])
-            
             # Create node
             newnode = node(game)
             # Add node to linked list
             gamesList.addGame(newnode)
     #print first five games
+    gamecount = gamesList.length
+    print(f"There are {gamecount} games in the list.")
     print("Before sorting:")
     print_first_five(gamesList)
     print('')
@@ -54,7 +62,6 @@ def main():
         print(f"Single search time: {round(time_elapsed_a)} nanoseconds.")
         print(f"Average search time: {round(time_elapsed_b)} nanoseconds.")
         print('')
-
     #sort linked list by name with insertion sort and quick sort
     gamesList1 = gamesList
     gamesList2 = gamesList
@@ -67,10 +74,19 @@ def main():
 
     
     print('After Sorting:')
-    print_first_five(gamesList2)
+    print_first_five(gamesList1)
     print('')
     print(f"Time for insertion sort: {round((end - start) * 1000000000)} nanoseconds.")
     print(f"Time for quick sort: {round((endb - startb) * 1000000000)} nanoseconds.")
+
+    #test binary search
+    for i in range(3):
+        print(f"Search number {i + 1}:")
+        time_elapsed_a, time_elapsed_b = binary_search_test(gamesList1)
+        print(f"Single search time: {round(time_elapsed_a)} nanoseconds.")
+        print(f"Average search time: {round(time_elapsed_b)} nanoseconds.")
+        print('')
+    
     
     
 
@@ -98,11 +114,11 @@ def print_first_five(gamesList):
         print(f"{ID}, {name}, {avgUserRating}, {userRatingCount}, {developer}, {size}")
         current = current.next
 
-#master function for linear search test. allows us to call the whole test multiple times
+#master function for linear search test. allows calling the whole test multiple times easily
 def linear_search_test(gamesList):
     #get random game
     name = get_random_game(gamesList)
-    print("Searching for", name)
+    print("Searching for...", name)
     start = time.time() #start precise timer
     x = linearSearch(gamesList, name)
     end = time.time() #end precise timer
@@ -113,6 +129,25 @@ def linear_search_test(gamesList):
     for i in range(10):
         start = time.time()
         x = linearSearch(gamesList, name)
+        end = time.time()
+        time_elapsed_b += (end - start) * 1000000000
+    return time_elapsed_a, time_elapsed_b / 10
+
+#master function for binary search test. allows calling the whole test multiple times easily
+def binary_search_test(gamesList):
+    #get random game
+    name = get_random_game(gamesList)
+    print("Searching for...", name)
+    start = time.time() #start precise timer
+    x = binarySearch(gamesList, name)
+    end = time.time() #end precise timer
+    #convert to nanoseconds
+    time_elapsed_a = (end - start) * 1000000000
+    #search 10 more times and get average
+    time_elapsed_b = 0
+    for i in range(10):
+        start = time.time()
+        x = binarySearch(gamesList, name)
         end = time.time()
         time_elapsed_b += (end - start) * 1000000000
     return time_elapsed_a, time_elapsed_b / 10
