@@ -18,7 +18,7 @@ import sys
 #sorting algorithm imports
 from insertionSort import insertionSort
 from quickSort import quickSort
-#set recursion limit, we have a lot of inputs
+#set recursion limit, there is a lot of inputs
 sys.setrecursionlimit(1000000)
 
 #main function
@@ -49,6 +49,8 @@ def main():
             newnode = node(game)
             # Add node to linked list
             gamesList.addGame(newnode)
+    #close file
+    file.close()
     #print first five games
     gamecount = gamesList.length
     print(f"There are {gamecount} games in the list.")
@@ -62,35 +64,43 @@ def main():
         print(f"Single search time: {round(time_elapsed_a)} nanoseconds.")
         print(f"Average search time: {round(time_elapsed_b)} nanoseconds.")
         print('')
+    
+    #store average linear search time
+    linearSearchAverageTime = time_elapsed_b
     #sort linked list by name with insertion sort and quick sort
-    gamesList1 = gamesList
-    gamesList2 = gamesList
     start = time.time()
-    insertionSort(gamesList1)
+    sortedGamesArray = insertionSort(gamesList)
     end = time.time()
     startb = time.time()
-    quickSort(gamesList2)
+    sortedGamesArray = quickSort(gamesList)
     endb = time.time()
-
+    #store quicksort time
+    quickSortTime = (endb - startb) * 1000000000
     
     print('After Sorting:')
-    print_first_five(gamesList1)
+    for i in range(5):
+        print(f"{sortedGamesArray[i].game.ID}, {sortedGamesArray[i].game.name}, {sortedGamesArray[i].game.avgUserRating}, {sortedGamesArray[i].game.userRatingCount}, {sortedGamesArray[i].game.developer}, {sortedGamesArray[i].game.size}")
     print('')
     print(f"Time for insertion sort: {round((end - start) * 1000000000)} nanoseconds.")
-    print(f"Time for quick sort: {round((endb - startb) * 1000000000)} nanoseconds.")
+    print(f"Time for quick sort: {round(quickSortTime)} nanoseconds.\n")
 
     #test binary search
     for i in range(3):
         print(f"Search number {i + 1}:")
-        time_elapsed_a, time_elapsed_b = binary_search_test(gamesList1)
+        time_elapsed_a, time_elapsed_b = binary_search_test(sortedGamesArray)
         print(f"Single search time: {round(time_elapsed_a)} nanoseconds.")
         print(f"Average search time: {round(time_elapsed_b)} nanoseconds.")
         print('')
-    
-    
-    
+    #store average binary search time
+    binarySearchAverageTime = round(time_elapsed_b)
 
+    #calculate breakpoint between linear searches and quicksort and binary searches
+    if linearSearchAverageTime > binarySearchAverageTime:
+        m_range = quickSortTime / (linearSearchAverageTime - binarySearchAverageTime)
+    print(f"\nBreakpoint m = {round(m_range)} between repeated linear searches and sort-once & multiple binary searches.")
 
+    #end of program
+    print("\nExiting")
 #returns a random game name from the linked list
 def get_random_game(gamesList):
     random_index = random.randint(0, gamesList.length - 1)
@@ -134,12 +144,12 @@ def linear_search_test(gamesList):
     return time_elapsed_a, time_elapsed_b / 10
 
 #master function for binary search test. allows calling the whole test multiple times easily
-def binary_search_test(gamesList):
+def binary_search_test(gamesArray):
     #get random game
-    name = get_random_game(gamesList)
+    name = gamesArray[random.randint(0, len(gamesArray) - 1)].game.name
     print("Searching for...", name)
     start = time.time() #start precise timer
-    x = binarySearch(gamesList, name)
+    x = binarySearch(gamesArray, name)
     end = time.time() #end precise timer
     #convert to nanoseconds
     time_elapsed_a = (end - start) * 1000000000
@@ -147,10 +157,11 @@ def binary_search_test(gamesList):
     time_elapsed_b = 0
     for i in range(10):
         start = time.time()
-        x = binarySearch(gamesList, name)
+        x = binarySearch(gamesArray, name)
         end = time.time()
         time_elapsed_b += (end - start) * 1000000000
     return time_elapsed_a, time_elapsed_b / 10
+    
 
 if __name__ == "__main__":
     main()
