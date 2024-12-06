@@ -1,3 +1,4 @@
+#standard quicksort implementation written by joshua whynot on 12/6/24
 def quickSort(gamesList):
     if gamesList.head is None:
         return []
@@ -10,6 +11,7 @@ def quickSort(gamesList):
 
     return quicksort_rec(nodes)
 
+#recursive helper function
 def quicksort_rec(nodes):
     if len(nodes) <= 1:
         return nodes

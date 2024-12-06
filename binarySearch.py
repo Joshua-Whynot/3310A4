@@ -1,4 +1,4 @@
-#standard binary search implementation
+#standard binary search implementation written by joshua whynot on 12/6/24
 def binarySearch(list, target_name):
     start = 0
     end = len(list) - 1

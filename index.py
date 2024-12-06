@@ -1,7 +1,7 @@
 # CS3310 Fall 2024 Assignment 4
 # Author: Joshua Whynot
 # Date: 12/3/24
-# Updated: 12/5/24
+# Updated: 12/6/24
 
 #Data structure imports
 from gamesList import gamesLinkedList
@@ -101,6 +101,7 @@ def main():
 
     #end of program
     print("\nExiting")
+
 #returns a random game name from the linked list
 def get_random_game(gamesList):
     random_index = random.randint(0, gamesList.length - 1)

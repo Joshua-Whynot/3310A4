@@ -1,4 +1,4 @@
-#main sort
+#standard insertion sort written by joshua whynot on 12/6/24
 def insertionSort(gamesList):
     if gamesList.head is None:
         return []
